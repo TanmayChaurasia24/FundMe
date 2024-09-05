@@ -11,7 +11,7 @@ export const POST = async (req: NextRequest) => {
     console.log(token);
 
     const user = await User.findOne({
-      verifytoken: token,
+      verifyToken: token,
       verifyTokenExpiry: {
         $gt: Date.now(),
       },

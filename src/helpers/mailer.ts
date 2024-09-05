@@ -7,19 +7,23 @@ interface incomingData {
   userid: string;
 }
 
-export const sendemail = async ({ email, emailtype, userid }: incomingData) => {
+export const sendemail = async ({ email, emailtype, userid }: any) => {
   try {
     const hashedToken = await bcrypt.hash(userid.toString(), 20);
 
     if(emailtype === "VERIFY") {
       await User.findByIdAndUpdate(userid, {
-        verifytoken: hashedToken,
-        verifyTokenExpiry: Date.now() + 3600000,
+        $set:{
+          verifyToken: hashedToken,
+          verifyTokenExpiry: Date.now() + 3600000,
+        }
       });
     } else if(emailtype === 'RESET') {
         await User.findByIdAndUpdate(userid,{
+          $set: {
             forgotPasswordToken:hashedToken,
             forgotPasswordTokenExpiry: Date.now() + 3600000
+          }
         })
     }
 
