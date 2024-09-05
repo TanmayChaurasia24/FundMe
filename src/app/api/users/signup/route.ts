@@ -39,7 +39,7 @@ export const POST = async (req: NextRequest) => {
         await sendemail({ email, emailtype: "VERIFY", userid: saveduser._id });
         console.log("Verification email sent to:", email);
 
-        return NextResponse.json({ message: 'User registration successful' }, { status: 200 });
+        return NextResponse.json({ message: 'User registration successful',success:'true' }, { status: 200 });
 
     } catch (error: any) {
         console.error("Error in POST request:", error.message);
