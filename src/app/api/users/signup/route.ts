@@ -36,9 +36,6 @@ export const POST = async (req: NextRequest) => {
         const saveduser = await newuser.save();
         console.log("User saved:", saveduser);
 
-        await sendemail({ email, emailtype: "VERIFY", userid: saveduser._id });
-        console.log("Verification email sent to:", email);
-
         return NextResponse.json({ message: 'User registration successful',success:'true' }, { status: 200 });
 
     } catch (error: any) {

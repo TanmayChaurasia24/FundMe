@@ -1,34 +1,35 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Router from "next/router";
 import Link from "next/link";
+
 const verifyEmail = () => {
-  const [token, settoken] = useState("");
-  const [verified, setverified] = useState(false);
-  const [error, seterror] = useState(false);
+  const [token, setToken] = useState("");
+  const [verified, setVerified] = useState(false);
+  const [error, setError] = useState(false);
 
   const verifyUserEmail = async () => {
     try {
       const response = await axios.post("/api/users/verifyemail", {
         token,
       });
-      setverified(true);
+      setVerified(true);
       console.log(response);
-    } catch (error: any) {
-      throw new Error(error.message);
+    } catch (err: any) {
+      console.error(err.message);
+      setError(true);
     }
   };
 
   useEffect(() => {
-    const urltoken = window.location.search.split("=")[1];
-    settoken(urltoken || "");
-    console.log(urltoken);
+    // Use URLSearchParams to get the token from the query parameters
+    const params = new URLSearchParams(window.location.search);
+    const urlToken = params.get("token"); // 'token' should match the query parameter name
+    console.log("Token received:", urlToken);
 
-    // const { query } = Router;
-    // const urltoken2 = query.token;
-    // // settoken(urltoken2 || "");
-    // console.log(urltoken2);
+    if (urlToken) {
+      setToken(urlToken);
+    }
   }, []);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ const verifyEmail = () => {
       verifyUserEmail();
     }
   }, [token]);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <h1 className="text-4xl">Verify Email</h1>
@@ -50,7 +52,11 @@ const verifyEmail = () => {
       ) : (
         <h2 className="p-2 bg-red-400 text-black">Email Not Verified</h2>
       )}
+      {error && (
+        <h2 className="p-2 bg-red-500 text-white">Verification Failed</h2>
+      )}
     </div>
   );
 };
+
 export default verifyEmail;

@@ -1,11 +1,23 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { LampContainer } from "../components/ui/lamp";
-import Image from "next/image";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 export default function Page() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    window.location.href = "/login";
+  };
+
   return (
     <>
       <LampContainer>
@@ -19,27 +31,39 @@ export default function Page() {
           }}
           className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
         >
-          FundMe <br />{" "}
-          <p className="text-2xl ">
-            A crowdfunding platform for creators get fund your projects
+          FundMe <br />
+          <p className="text-2xl">
+            A crowdfunding platform for creators to fund your projects
           </p>
-          <div className="">
-            <Link href={"/login"}>
-              <button
-                type="button"
-                className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center m-5"
-              >
-                Login
-              </button>
-            </Link>
-            <Link href={"/signup"}>
+          <div>
+            {!isLoggedIn ? (
+              <>
+                <Link href="/login">
+                  <button
+                    type="button"
+                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center m-5"
+                  >
+                    Login
+                  </button>
+                </Link>
+                <Link href="/signup">
+                  <button
+                    type="button"
+                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                  >
+                    Sign up
+                  </button>
+                </Link>
+              </>
+            ) : (
               <button
                 type="button"
                 className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                onClick={handleLogout}
               >
-                Sign up
+                Logout
               </button>
-            </Link>
+            )}
           </div>
         </motion.h1>
       </LampContainer>
@@ -57,9 +81,9 @@ export default function Page() {
               src="/icons8-businessman.gif"
               alt=""
             />
-            <p className="font-bold">Your Fans Want's To Help</p>
+            <p className="font-bold">Your Fans Want to Help</p>
             <p className="text-center">
-              your fans are available to help in your project
+              Your fans are available to help in your project
             </p>
           </div>
           <div className="items space-y-3 flex flex-col justify-center items-center">
@@ -69,9 +93,9 @@ export default function Page() {
               src="/icons8-coin.gif"
               alt=""
             />
-            <p className="font-bold">Your Fans Want's To Help</p>
+            <p className="font-bold">Your Fans Want to Help</p>
             <p className="text-center">
-              your fans are available to help in your project
+              Your fans are available to help in your project
             </p>
           </div>
           <div className="items space-y-3 flex flex-col justify-center items-center">
@@ -81,9 +105,9 @@ export default function Page() {
               src="/icons8-group.gif"
               alt=""
             />
-            <p className="font-bold">Your Fans Want's To Help</p>
+            <p className="font-bold">Your Fans Want to Help</p>
             <p className="text-center">
-              your fans are available to help in your project
+              Your fans are available to help in your project
             </p>
           </div>
         </div>
@@ -93,7 +117,7 @@ export default function Page() {
 
       <div className="text-white container mx-auto p-6">
         <h1 className="text-2xl font-bold text-center my-4">
-          Learn More about us
+          Learn More About Us
         </h1>
         <div className="flex gap-5 justify-around my-14">
           <div className="items space-y-3 flex flex-col justify-center items-center">
@@ -103,9 +127,9 @@ export default function Page() {
               src="/icons8-businessman.gif"
               alt=""
             />
-            <p className="font-bold">Your Fans Want's To Help</p>
+            <p className="font-bold">Your Fans Want to Help</p>
             <p className="text-center">
-              your fans are available to help in your project
+              Your fans are available to help in your project
             </p>
           </div>
           <div className="items space-y-3 flex flex-col justify-center items-center">
@@ -115,9 +139,9 @@ export default function Page() {
               src="/icons8-coin.gif"
               alt=""
             />
-            <p className="font-bold">Your Fans Want's To Help</p>
+            <p className="font-bold">Your Fans Want to Help</p>
             <p className="text-center">
-              your fans are available to help in your project
+              Your fans are available to help in your project
             </p>
           </div>
           <div className="items space-y-3 flex flex-col justify-center items-center">
@@ -127,9 +151,9 @@ export default function Page() {
               src="/icons8-group.gif"
               alt=""
             />
-            <p className="font-bold">Your Fans Want's To Help</p>
+            <p className="font-bold">Your Fans Want to Help</p>
             <p className="text-center">
-              your fans are available to help in your project
+              Your fans are available to help in your project
             </p>
           </div>
         </div>
