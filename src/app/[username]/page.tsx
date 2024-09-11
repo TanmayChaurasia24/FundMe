@@ -3,9 +3,11 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Cookies from "js-cookie";
-import { ThreeDCardDemo} from "../../components/FansBgCard"
-import {PlaceholdersAndVanishInputDemo} from "../../components/Makepayment"
-const Username = ({params}:any) => {
+import { ThreeDCardDemo } from "../../components/FansBgCard";
+import { TailwindcssButtons } from "../../components/Paymentbutton";
+
+import { PlaceholdersAndVanishInputDemo } from "../../components/Makepayment";
+const Username = ({ params }: any) => {
   const token = Cookies.get("token");
 
   if (!!token) {
@@ -34,23 +36,22 @@ const Username = ({params}:any) => {
       </div>
 
       <div className="info flex justify-center items-center mt-24 text-white flex-col gap-2">
-        <div className="font-bold text-2xl">
-            @{params.username}
-        </div>
+        <div className="font-bold text-2xl">@{params.username}</div>
+        <div className="text-slate-400">creating animated art for VTT</div>
         <div className="text-slate-400">
-            creating animated art for VTT
-        </div>
-        <div className="text-slate-400">
-            343234 posts . $3452/release . 2342 members
+          343234 posts . $3452/release . 2342 members
         </div>
       </div>
 
-      <div className="payments flex gap-5 w-[80%] mx-auto mb-2">
+      <div className="payments flex gap-5 w-[70%] mx-auto mb-2">
+        <ThreeDCardDemo />
+        <div className="flex flex-col h-[40vh] justify-center items-center mt-[275px]">
+          <PlaceholdersAndVanishInputDemo />
+          <div className="flex justify-center items-center mt-5">
 
-        <ThreeDCardDemo/>
-
-          <PlaceholdersAndVanishInputDemo/>
-
+          <TailwindcssButtons />
+          </div>
+        </div>
       </div>
     </>
   );

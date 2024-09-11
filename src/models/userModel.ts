@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Url } from "next/dist/shared/lib/router/router";
 
 interface UserDefine {
     username: string; 
@@ -6,6 +7,8 @@ interface UserDefine {
     password:string;
     isVerified:boolean;
     isAdmin:boolean;
+    profilepic?:Url;
+    coverpic?:Url;
     forgotPasswordToken?: Date;
     forgotPasswordTokenExpiry?: Date;
     verifyToken?: String;
@@ -34,6 +37,14 @@ const userSchema = new mongoose.Schema<UserDefine>({
     isAdmin: {
         type: Boolean,
         default: false,
+    },
+    profilepic: {
+        type:String,
+        default: "",
+    },
+    coverpic: {
+        type:String,
+        default: "",
     },
     forgotPasswordToken: String,
     forgotPasswordTokenExpiry: Date,

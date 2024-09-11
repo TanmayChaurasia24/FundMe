@@ -86,13 +86,13 @@ export function ExpandableCardDemo() {
                   <div className="">
                     <motion.h3
                       layoutId={`title-${active.title}-${id}`}
-                      className="font-bold text-neutral-700 dark:text-neutral-200"
+                      className="font-bold text-slate-900 dark:text-neutral-200"
                     >
                       {active.title}
                     </motion.h3>
                     <motion.p
                       layoutId={`description-${active.description}-${id}`}
-                      className="text-neutral-600 dark:text-neutral-400"
+                      className="text-slate-900 dark:text-neutral-400"
                     >
                       {active.description}
                     </motion.p>
@@ -102,7 +102,7 @@ export function ExpandableCardDemo() {
                     layoutId={`button-${active.title}-${id}`}
                     href={active.ctaLink}
                     target="_blank"
-                    className="px-4 py-3 text-sm rounded-full font-bold bg-green-500 text-white"
+                    className="px-4 py-3 text-sm rounded-full font-bold bg-green-500 text-slate-900"
                   >
                     {active.ctaText}
                   </motion.a>
@@ -131,7 +131,7 @@ export function ExpandableCardDemo() {
             layoutId={`card-${card.title}-${id}`}
             key={`card-${card.title}-${id}`}
             onClick={() => setActive(card)}
-            className="p-4 text-white flex flex-col md:flex-row justify-between items-center hover:bg-slate-800 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
+            className="p-4 text-slate-900 flex flex-col md:flex-row justify-between items-center hover:bg-slate-800 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
           >
             <div className="flex gap-4 flex-col md:flex-row ">
               <motion.div layoutId={`image-${card.title}-${id}`}>
@@ -146,13 +146,13 @@ export function ExpandableCardDemo() {
               <div className="">
                 <motion.h3
                   layoutId={`title-${card.title}-${id}`}
-                  className="font-medium text-neutral-100 dark:text-neutral-200 text-center md:text-left"
+                  className="font-medium text-slate-900 dark:text-neutral-200 text-center md:text-left"
                 >
                   {card.title}
                 </motion.h3>
                 <motion.p
                   layoutId={`description-${card.description}-${id}`}
-                  className="text-neutral-300 dark:text-neutral-400 text-center md:text-left"
+                  className="text-slate-700 dark:text-neutral-400 text-center md:text-left"
                 >
                   {card.description}
                 </motion.p>
