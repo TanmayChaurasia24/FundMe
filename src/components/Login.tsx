@@ -4,6 +4,7 @@ import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
+import Cookies from "js-cookie";
 import axios from "axios";
 import {
   IconBrandGithub,
@@ -11,6 +12,7 @@ import {
   IconBrandOnlyfans,
 } from "@tabler/icons-react";
 import toast from "react-hot-toast";
+import { LocaleRouteNormalizer } from "next/dist/server/future/normalizers/locale-route-normalizer";
 
 export function SignupFormDemo() {
   const router = useRouter();
@@ -25,21 +27,36 @@ export function SignupFormDemo() {
 
   const handleLogin = async () => {
     try {
-      setUser({
-        email: "",
-        password: "",
-      });
-      setLoading(true);
-      const response = await axios.post("/api/users/login", user);
-      router.push("/");
+        setUser({
+            email: "",
+            password: "",
+        });
+        setLoading(true);
+
+        const response = await axios.post<any>("/api/users/login", user);
+
+        // Check the structure of response.data
+        console.log("Response Data:", response.data);
+
+        // Ensure you are accessing the cookie value correctly
+        const token = response.data.Cookie?.value;
+        if (token) {
+          localStorage.setItem(token,token)
+        } else {
+            console.error("Token not found in response data");
+        }
+
+        router.push("/");
+
     } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "An error occurred during signup"
-      );
+        toast.error(
+            error.response?.data?.message || "An error occurred during login"
+        );
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;

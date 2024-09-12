@@ -2,38 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { LampContainer } from "../components/ui/lamp";
-import Link from "next/link";
-import Cookies from "js-cookie";
-import axios from "axios";
 
 export default function Page() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const token = Cookies.get("token");
-    console.log("Token:", token);
-
-    setIsLoggedIn(!!token);
-  }, []);
-
-  const handleLogout = async (e:any) => {
-    e.preventDefault();
-
-    try {
-      const response = await axios.get("/api/users/logout");
-      console.log("Logout response:", response);
-
-      if (response.status === 200) {
-        setIsLoggedIn(false);
-        Cookies.remove("token"); // Remove the token from cookies
-        window.location.href = "/";
-      } else {
-        console.error("Logout failed:", response);
-      }
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
-  };
+  
 
   return (
     <>
@@ -52,54 +23,14 @@ export default function Page() {
           <p className="text-2xl">
             A crowdfunding platform for creators to fund your projects
           </p>
-          <div>
-            {!isLoggedIn ? (
-              <>
-                <Link href="/login">
-                  <button
-                    type="button"
-                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center m-5"
-                  >
-                    Login
-                  </button>
-                </Link>
-                <Link href="/signup">
-                  <button
-                    type="button"
-                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                  >
-                    Sign up
-                  </button>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/dashboard">
-                  <button
-                    type="button"
-                    className="text-white bg-gradient-to-br from-green-500 to-green-600 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                  >
-                    Dashboard
-                  </button>
-                </Link>
-                <button
-                  type="button"
-                  className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
         </motion.h1>
       </LampContainer>
 
       {/* Rest of the component remains unchanged */}
         {/* Rest of the code for additional content */}
-        <div className="bg-white h-1 opacity-10"></div>
+        {/* <div className="bg-white h-1 opacity-10"></div> */}
 
-<div className="text-white container mx-auto p-6">
+{/* <div className="text-white container mx-auto p-6">
   <h1 className="text-2xl font-bold text-center mb-4">
     Your Fans Can Fund You
   </h1>
@@ -141,7 +72,7 @@ export default function Page() {
       </p>
     </div>
   </div>
-</div>
+</div> */}
     </>
   );
 }
