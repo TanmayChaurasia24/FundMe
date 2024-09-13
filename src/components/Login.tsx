@@ -4,18 +4,21 @@ import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
-import Cookies from "js-cookie";
 import axios from "axios";
+import { signIn } from "next-auth/react";
 import {
   IconBrandGithub,
   IconBrandGoogle,
-  IconBrandOnlyfans,
 } from "@tabler/icons-react";
 import toast from "react-hot-toast";
-import { LocaleRouteNormalizer } from "next/dist/server/future/normalizers/locale-route-normalizer";
+import { useSession } from "next-auth/react";
 
 export function SignupFormDemo() {
   const router = useRouter();
+  const {data:session} = useSession();
+  if(session) {
+    router.push('/dashboard')
+  }
 
   const [user, setUser] = useState({
     email: "",
@@ -27,36 +30,34 @@ export function SignupFormDemo() {
 
   const handleLogin = async () => {
     try {
-        setUser({
-            email: "",
-            password: "",
-        });
-        setLoading(true);
+      setUser({
+        email: "",
+        password: "",
+      });
+      setLoading(true);
 
-        const response = await axios.post<any>("/api/users/login", user);
+      const response = await axios.post<any>("/api/users/login", user);
 
-        // Check the structure of response.data
-        console.log("Response Data:", response.data);
+      // Check the structure of response.data
+      console.log("Response Data:", response.data);
 
-        // Ensure you are accessing the cookie value correctly
-        const token = response.data.Cookie?.value;
-        if (token) {
-          localStorage.setItem(token,token)
-        } else {
-            console.error("Token not found in response data");
-        }
+      // Ensure you are accessing the cookie value correctly
+      const token = response.data.Cookie?.value;
+      if (token) {
+        localStorage.setItem(token, token);
+      } else {
+        console.error("Token not found in response data");
+      }
 
-        router.push("/");
-
+      router.push("/");
     } catch (error: any) {
-        toast.error(
-            error.response?.data?.message || "An error occurred during login"
-        );
+      toast.error(
+        error.response?.data?.message || "An error occurred during login"
+      );
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -114,6 +115,7 @@ export function SignupFormDemo() {
 
         <div className="flex flex-col space-y-4">
           <button
+            onClick={() => signIn("github")}
             className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
             type="button"
           >

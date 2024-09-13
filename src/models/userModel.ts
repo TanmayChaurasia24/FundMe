@@ -1,58 +1,49 @@
 import mongoose from "mongoose";
-import { Url } from "next/dist/shared/lib/router/router";
 
+// Interface for the User document
 interface UserDefine {
-    username: string; 
-    email:string;
-    password:string;
-    isVerified:boolean;
-    isAdmin:boolean;
-    profilepic?:Url;
-    coverpic?:Url;
-    forgotPasswordToken?: Date;
-    forgotPasswordTokenExpiry?: Date;
-    verifyToken?: String;
-    verifyTokenExpiry?: Date;
+  username: string;
+  email: string;
+  password?: string; // Make password optional for OAuth users
+  profilepic?: string;
+  coverpic?: string;
+  forgotPasswordToken?: string;
+  forgotPasswordTokenExpiry?: Date;
+  verifyToken?: string;
+  verifyTokenExpiry?: Date;
 }
 
+// Mongoose schema for the User model
 const userSchema = new mongoose.Schema<UserDefine>({
-    username: {
-        type: String,
-        required: [true,"unique username is required"],
-        unique: true,
-    },
-    email: {
-        type: String,
-        required: [true,"unique email is required"],
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: [true,"password is required"],
-    },
-    isVerified: {
-        type: Boolean,
-        default: false,
-    },
-    isAdmin: {
-        type: Boolean,
-        default: false,
-    },
-    profilepic: {
-        type:String,
-        default: "",
-    },
-    coverpic: {
-        type:String,
-        default: "",
-    },
-    forgotPasswordToken: String,
-    forgotPasswordTokenExpiry: Date,
-    verifyToken: String,
-    verifyTokenExpiry: Date,
+  username: {
+    type: String,
+    required: [true, "A unique username is required"],
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: [true, "A unique email is required"],
+    unique: true,
+  },
+  password: {
+    type: String, // Make password optional for OAuth users
+    required: false,
+  },
+  profilepic: {
+    type: String,
+    default: "",
+  },
+  coverpic: {
+    type: String,
+    default: "",
+  },
+  forgotPasswordToken: String,
+  forgotPasswordTokenExpiry: Date,
+  verifyToken: String,
+  verifyTokenExpiry: Date,
 });
 
+// Ensure the model is not redefined
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
-const User = mongoose.models.users || mongoose.model("users",userSchema);
 export default User;
-

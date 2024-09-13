@@ -7,20 +7,19 @@ import { cn } from "@/lib/utils";
 import axios from "axios"; // Added axios import
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
-import { useSession,signOut } from "next-auth/react";
-import {
-  IconBrandGithub,
-  IconBrandGoogle,
-} from "@tabler/icons-react";
+import { useSession, signOut } from "next-auth/react";
+import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 
 export function SignupFormDemo() {
-  const {data:session}:any = useSession()
+  const { data: session }: any = useSession();
   const router = useRouter();
-  if(session) {
-    return <>
-      Signed in as {session.user.email} <br/>
-      <button onClick={() => signOut()}>Sign out</button>
-    </>
+  if (session) {
+    return (
+      <>
+        Signed in as {session.user.email} <br />
+        <button onClick={() => signOut()}>Sign out</button>
+      </>
+    );
   }
   const [user, setUser] = useState({
     username: "",
@@ -34,10 +33,10 @@ export function SignupFormDemo() {
   const handleSignup = async () => {
     try {
       setUser({
-        username:"",
+        username: "",
         email: "",
         password: "",
-      })
+      });
       setLoading(true);
       const response = await axios.post("/api/users/signup", user); // Calls signup API with user data
       console.log("Signup successful:", response);
@@ -121,9 +120,10 @@ export function SignupFormDemo() {
 
         <div className="flex flex-col space-y-4">
           <button
+            onClick={() => signIn("github")}
             className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="button" 
-            onClick={() => signIn("github")}// Changed to button (not submitting the form)
+            type="button"
+            // Changed to button (not submitting the form)
           >
             <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
             <span className="text-neutral-700 dark:text-neutral-300 text-sm">

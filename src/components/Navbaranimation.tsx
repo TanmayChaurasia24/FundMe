@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import { HoveredLink, Menu, MenuItem, ProductItem } from "./ui/navbar-menu";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import Cookies from "js-cookie";
-import axios from "axios";
+import { useSession, signOut } from "next-auth/react";
 
 export function NavbarDemo() {
   return (
@@ -15,37 +14,8 @@ export function NavbarDemo() {
 }
 
 function Navbar({ className }: { className?: string }) {
+  const { data: session }: any = useSession();
   const [active, setActive] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Check if the user is logged in by reading from localStorage
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token); // Set isLoggedIn based on token presence
-  }, []);
-
-  const handleLogout = async (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-
-    try {
-      const response = await axios.get("/api/users/logout");
-      console.log("Logout response:", response);
-
-      if (response.status === 200) {
-        // Remove token and update state
-        localStorage.removeItem("token");
-        Cookies.remove("token"); // Ensure to remove cookies as well
-        setIsLoggedIn(false); // Update state to reflect logout
-        window.location.href = "/"; // Redirect to home
-      } else {
-        console.error("Logout failed:", response);
-      }
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
-  };
 
   return (
     <div
@@ -55,42 +25,46 @@ function Navbar({ className }: { className?: string }) {
         <Link href={"/"} className="text-white font-semibold">
           Home
         </Link>
-        (
-        <>
-          <Link href={"/signup"} className="text-white font-semibold">
-            Signup
-          </Link>
-          <Link href={"/login"} className="text-white font-semibold">
-            Login
-          </Link>
-
-          <Link
-            href={"/"}
-            onClick={handleLogout}
-            className="text-white font-semibold"
-          >
-            Logout
-          </Link>
-        </>
-        )
-        <MenuItem setActive={setActive} active={active} item="More">
-        <div className="flex flex-col justify-center gap-3">
-        <Link
-            href={"/"}
-            onClick={handleLogout}
-            className="text-white font-semibold"
-          >
-            myPage
-          </Link>
-          <Link
-            href={"/dashboard"}
-            onClick={handleLogout}
-            className="text-white font-semibold"
-          >
-            Dashboard
-          </Link>
-        </div>
-        </MenuItem>
+        {!session ? (
+          <>
+            <Link href={"/signup"} className="text-white font-semibold">
+              Signup
+            </Link>
+            <Link href={"/login"} className="text-white font-semibold">
+              Login
+            </Link>
+          </>
+        ) : (
+          <>
+            {session?.user && (
+              <MenuItem
+                setActive={setActive}
+                active={active}
+                // Use curly braces with backticks for template literals
+                item={`Welcome ${session.user.name} ↓`}
+              >
+                <div className="flex flex-col justify-center gap-3">
+                  <Link href={`/${session.user.name}`} className="text-white font-semibold">
+                    My Page
+                  </Link>
+                  <Link
+                    href={"/dashboard"}
+                    className="text-white font-semibold"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href={"/"}
+                    onClick={() => signOut()}
+                    className="text-white font-semibold"
+                  >
+                    Logout
+                  </Link>
+                </div>
+              </MenuItem>
+            )}
+          </>
+        )}
       </Menu>
     </div>
   );
