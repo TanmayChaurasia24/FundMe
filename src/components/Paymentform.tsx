@@ -8,11 +8,84 @@ import {
   IconBrandGoogle,
   IconBrandOnlyfans,
 } from "@tabler/icons-react";
+import { initiate } from "@/actions/Useractions";
+import Razorpay from "razorpay";
+import { useState } from "react";
+import { SessionContext } from "next-auth/react";
+import { getSession } from 'next-auth/react';
+
+interface RazorpayOptions {
+  key_id: string;
+  amount: string;
+  currency: string;
+  name: string;
+  description: string;
+  image: string;
+  order_id: string;
+  callback_url: string;
+  prefill: {
+    name: string;
+    email: string;
+    contact: string;
+  };
+  notes: {
+    address: string;
+  };
+  theme: {
+    color: string;
+  };
+}
 
 export function SignupFormDemo() {
+  const session = getSession(); 
+  const [paymentform,setpaymentform] = useState({});
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
+  };
+  const handlechange = () => {
+
+  }
+
+  const pay = async(amount:any) => {
+
+    if (!session || !session.user) {
+      console.error("User session not found");
+      return;
+    }
+    const userName = session.user.name || 'Guest';
+    
+    let a = await initiate(amount, userName, paymentform);
+    let orderId = a.id;
+    var options:RazorpayOptions = {
+      key_id: process.env.KEY_ID!, // Enter the Key ID generated from the Dashboard
+      amount: "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      currency: "INR",
+      name: "FundMe", //your business name
+      description: "Test Transaction",
+      image: "https://example.com/your_logo",
+      order_id: orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      callback_url: "http://localhost:3000/api/razorpay",
+      prefill: {
+        //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
+        name: "Gaurav Kumar", //your customer's name
+        email: "gaurav.kumar@example.com",
+        contact: "9000090000", //Provide the customer's phone number for better conversion rates
+      },
+      notes: {
+        address: "Razorpay Corporate Office",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+    const Razorpay = (window as any).Razorpay;
+    if (Razorpay) {
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+    } else {
+      console.error('Razorpay is not defined.');
+    }
   };
   return (
     <div className="max-w-md w-screen mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-neutral-200  dark:bg-black">

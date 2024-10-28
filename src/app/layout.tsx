@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import SessionWrapper from "../components/Session-Wrapper";
-import { NavbarDemo } from "../components/Navbaranimation";
+import  Navbar from "../components/Navbar";
 import { getSession } from "next-auth/react"; // Adjust import as needed
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,9 +23,13 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <SessionWrapper session={session}>
-          <NavbarDemo />
-          <div className="flex flex-col min-h-screen bg-slate-950">
-            {children}
+          <div className="overflow-hidden">
+            <div className="h-[10vh]">
+              <Navbar />
+            </div>
+            <div className="flex flex-col max-h-min bg-slate-950">
+              {children}
+            </div>
           </div>
         </SessionWrapper>
       </body>
