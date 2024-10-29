@@ -8,7 +8,7 @@ export function TailwindcssButtons() {
       <Toaster position="top-center" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full max-w-7xl mx-auto gap-10">
         {buttons.map((button, idx) => (
-          // Enclose JSX inside parentheses and add a key prop
+          // Enclose JSX inside parentheses and add a key prop  
           <div key={idx}>
             {button.component}
           </div>
