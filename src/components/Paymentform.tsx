@@ -64,10 +64,10 @@ export function SignupFormDemo() {
 
   const pay = async (amount: number) => {
     // Step 3: Check if SDK is loaded before proceeding
-    if (!isRazorpayLoaded) {
-      console.error("Razorpay SDK not loaded yet.");
-      return;
-    }
+    // if (!isRazorpayLoaded) {
+    //   console.error("Razorpay SDK not loaded yet.");
+    //   return;
+    // }
 
     if (!session || !session.user) {
       console.error("User session not found");
@@ -103,12 +103,18 @@ export function SignupFormDemo() {
     rzp1.open();
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent page refresh
+    pay(Number(paymentform.amount));
+  };
+
+
   return (
     <div className="max-w-md w-screen mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-neutral-200 dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
         Donate Money For my Projects
       </h2>
-      <form className="my-8">
+      <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col justify-center items-center gap-3 md:flex-col space-y-2 md:space-y-0 md:space-x-2 mb-4 w-full">
           <LabelInputContainer>
             <Label htmlFor="firstname">Name</Label>
@@ -147,7 +153,7 @@ export function SignupFormDemo() {
 
         <button
           className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-          onClick={() => pay(Number(paymentform.amount))}
+          type="submit"
         >
           Pay &rarr;
           <BottomGradient />
@@ -156,9 +162,6 @@ export function SignupFormDemo() {
     </div>
   );
 }
-
-// Define BottomGradient and LabelInputContainer as in your original code...
-
 
 const BottomGradient = () => {
   return (

@@ -12,9 +12,9 @@ export default function UsernamePage({username}:any) {
   const cookieStore = cookies()
   const token = cookieStore.get("token")
 
-  if (!token) {
-    redirect("/login")
-  }
+  // if (!token) {
+  //   redirect("/login")
+  // }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">

@@ -17,7 +17,7 @@ export function SignupFormDemo() {
   const router = useRouter();
   const {data:session} = useSession();
   if(session) {
-    router.push('/dashboard')
+    router.push(`/${session.user?.name}`)
   }
 
   const [user, setUser] = useState({
