@@ -33,3 +33,39 @@ export const initiate = async (
 
     return x;
 };
+
+export const fetchuser = async (username: string) => {
+    try {
+        await dbconnect();
+        const user = await userModel.findOne({ username: username });
+
+        if (!user) {
+            console.log(`User with username ${username} not found.`);
+            return null; 
+        }
+
+        const currUser = user.toObject({flattenObjectIds: true});
+        return currUser;
+
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        return;
+    }
+};
+
+export const fetchpayments = async(username: string) => {
+    try {
+        await dbconnect();
+        const payment = await PaymentModel.find({to_user: username}).sort({amount: -1}).lean()
+
+        if(!payment) {
+            console.log(`No payments found for user ${username}.`)
+            return;
+        }
+
+        return payment
+    } catch (error) {
+        console.error("error in fetching the payments of the user: ", error);
+        return;
+    }
+}

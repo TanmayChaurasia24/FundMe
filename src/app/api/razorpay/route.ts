@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils";
 import PaymentModel from "@/models/paymentModel";
-import Razorpay from "razorpay";
 import { dbconnect } from "@/db/db";
 
 export const POST = async (req: any) => {
@@ -11,7 +10,7 @@ export const POST = async (req: any) => {
     let body = await req.formData();
     body = Object.fromEntries(body);
 
-    // Ensure we received the correct parameters
+    // Ensure required parameters are present
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return NextResponse.json(
@@ -26,13 +25,14 @@ export const POST = async (req: any) => {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
+    // Verify the payment using Razorpay utility
     const isVerified = validatePaymentVerification(
       {
-        order_id: body.razorpay_order_id,
-        payment_id: body.razorpay_payment_id,
+        order_id: razorpay_order_id,
+        payment_id: razorpay_payment_id,
       },
-      body.razorpay_signature,
-      process.env?.KEY_SECRET!
+      razorpay_signature,
+      process.env.KEY_SECRET!
     );
 
     if (!isVerified) {
@@ -42,14 +42,24 @@ export const POST = async (req: any) => {
       );
     }
 
-    const updatepayment = await PaymentModel.findByIdAndUpdate({
-        oid: body.razorpay_order_id
-    },{
-        done: "true"
-    },{
-        new: true
-    })
-    return NextResponse.redirect(`${process.env.URL}/${updatepayment.to_user}?paymentdone=true`)
+    // Update payment status
+    const updatepayment = await PaymentModel.findOneAndUpdate(
+      { oid: razorpay_order_id },
+      { done: "true" },
+      { new: true }
+    );
+
+    // Check if update was successful
+    if (!updatepayment) {
+      return NextResponse.json(
+        { error: "Failed to update payment status" },
+        { status: 500 }
+      );
+    }
+
+    // Redirect to a confirmation page based on `to_user` field
+    const redirectUrl = `${process.env.URL}/${updatepayment.to_user}?paymentdone=true`;
+    return NextResponse.redirect(redirectUrl);
   } catch (error) {
     console.error("Error processing payment verification:", error);
     return NextResponse.json(
