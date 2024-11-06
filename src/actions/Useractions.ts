@@ -15,7 +15,8 @@ export const initiate = async (
         key_id: process.env.KEY_ID!,
         key_secret: process.env.KEY_SECRET!,
     });
-
+    console.log(amount);
+    
     let options = {
         amount: Number.parseInt(String(amount)),
         currency: "INR",
@@ -53,19 +54,22 @@ export const fetchuser = async (username: string) => {
     }
 };
 
-export const fetchpayments = async(username: string) => {
+export const fetchpayments = async(username: string | null | undefined): Promise<any[]> => {
     try {
+        if(username === null || username === undefined) {
+            username = "";
+        }
         await dbconnect();
-        const payment = await PaymentModel.find({to_user: username}).sort({amount: -1}).lean()
+        const payment = await PaymentModel.find({to_user: username}).sort({createdAt: -1}).lean()
 
         if(!payment) {
             console.log(`No payments found for user ${username}.`)
-            return;
+            return [];
         }
-
+        // console.log( payment );        
         return payment
     } catch (error) {
         console.error("error in fetching the payments of the user: ", error);
-        return;
+        return [];
     }
 }

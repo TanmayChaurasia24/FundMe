@@ -77,11 +77,13 @@ export function SignupFormDemo() {
 
     let a = await initiate(amount, userName, paymentform);
     let orderId = a.id;
+    console.log(amount);
+    
     const options: RazorpayOptions = {
       key_id: process.env.KEY_ID!, // Replace with your actual Razorpay Key ID
-      amount: String(amount * 100), // Convert amount to paise
+      amount: String(amount  / 100), // Convert amount to paise
       currency: "INR",
-      name: "FundMe",
+      name: userName,
       description: "Test Transaction",
       image: "https://example.com/your_logo",
       order_id: orderId,
@@ -98,6 +100,9 @@ export function SignupFormDemo() {
         color: "#3399cc",
       },
     };
+
+    console.log(amount);
+    
 
     const rzp1 = new (window as any).Razorpay(options);
     rzp1.open();
@@ -128,11 +133,12 @@ export function SignupFormDemo() {
             />
           </LabelInputContainer>
           <LabelInputContainer>
-            <Label htmlFor="message">Message</Label>
+            <Label htmlFor="message">Message <span>(in 100 characters)</span></Label>
             <Input
               id="message"
               placeholder="Big Fan Brother"
               type="text"
+              maxLength={100}
               name="message"
               onChange={handleChange}
               value={paymentform.message}
@@ -142,7 +148,7 @@ export function SignupFormDemo() {
             <Label htmlFor="amount">Amount</Label>
             <Input
               id="amount"
-              placeholder="$100"
+              placeholder="₹100"
               type="number"
               name="amount"
               onChange={handleChange}
