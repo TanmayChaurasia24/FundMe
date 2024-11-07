@@ -37,7 +37,7 @@ export function ThreeDCardDemo() {
         <ul className="mx-5 text-lg">
           {payments.slice(0, 5).map((payment: any, index: number) => (
             <li key={index} className="my-4 flex gap-2 items-center">
-              {payment.name} donated {payment.amount} Rupee(s), with a message:{" "}
+              {payment.name} donated {payment.amount / 100} Rupee(s), with a message:{" "}
               {payment.message}
             </li>
           ))}
