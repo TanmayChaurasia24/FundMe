@@ -63,11 +63,10 @@ export function SignupFormDemo() {
   };
 
   const pay = async (amount: number) => {
-    // Step 3: Check if SDK is loaded before proceeding
-    // if (!isRazorpayLoaded) {
-    //   console.error("Razorpay SDK not loaded yet.");
-    //   return;
-    // }
+    if (!isRazorpayLoaded) {
+      console.error("Razorpay SDK not loaded yet.");
+      return;
+    }
 
     if (!session || !session.user) {
       console.error("User session not found");
@@ -109,8 +108,8 @@ export function SignupFormDemo() {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent page refresh
-    pay(Number(paymentform.amount));
+    e.preventDefault(); 
+    pay(Number(paymentform.amount) * 100);
   };
 
 

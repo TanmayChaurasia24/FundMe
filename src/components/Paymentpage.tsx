@@ -44,11 +44,8 @@ export default function UsernamePage({username}:any) {
 
       <div className="payments flex gap-5 w-[70%] mx-auto mb-2">
         <ThreeDCardDemo />
-        <div className="flex flex-col h-[40vh] justify-center items-center mt-[275px]">
+        <div className="flex flex-col h-[40vh] justify-center items-center mt-[150px]">
           <PlaceholdersAndVanishInputDemo />  
-          <div className="flex justify-center items-center mt-5">
-            <TailwindcssButtons />
-          </div>
         </div>
       </div>
     </div>

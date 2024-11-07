@@ -23,7 +23,7 @@ export const initiate = async (
     }
 
     let x = await instance.orders.create(options);
-
+    
     await PaymentModel.create({
         oid: x.id,
         amount: amount,
@@ -60,7 +60,7 @@ export const fetchpayments = async(username: string | null | undefined): Promise
             username = "";
         }
         await dbconnect();
-        const payment = await PaymentModel.find({to_user: username}).sort({createdAt: -1}).lean()
+        const payment = await PaymentModel.find({to_user: username, done: true}).sort({createdAt: -1}).lean()
 
         if(!payment) {
             console.log(`No payments found for user ${username}.`)

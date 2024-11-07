@@ -33,12 +33,12 @@ export function ThreeDCardDemo() {
   return (
     <div className="payment flex gap-3 mt-20">
       <div className="supporters bg-neutral-200 rounded-lg text-black p-10 w-[100%] max-h-fit">
-        <h2 className="text-2xl font-bold my-5">Fans who donated money</h2>
+        <h2 className="text-2xl text-center font-bold my-5">Fans who donated money</h2>
         <ul className="mx-5 text-lg">
           {payments.slice(0, 5).map((payment: any, index: number) => (
-            <li key={index} className="my-4 flex gap-2 items-center">
-              {payment.name} donated {payment.amount / 100} Rupee(s), with a message:{" "}
-              {payment.message}
+            <li key={index} className="my-4 gap-2 items-center list-disc">
+              {payment.name} donated ₹{payment.amount / 100}, with a <br />message:{" "}
+              <span className="font-bold">{payment.message}</span>
             </li>
           ))}
         </ul>
