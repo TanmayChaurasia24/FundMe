@@ -2,9 +2,9 @@ import NextAuth from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import mongoose from "mongoose";
 import User from "@/models/userModel";
-import { log } from "console";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export const Options = NextAuth({
+const authOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
@@ -12,7 +12,7 @@ export const Options = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }: any) {
+    async signIn({ user, account }: any) {
       if (account?.provider === "github") {
         if (!mongoose.connection.readyState) {
           await mongoose.connect(process.env.MONGO_URL!);
@@ -23,7 +23,7 @@ export const Options = NextAuth({
 
         if (!currentUser) {
           const newUser = new User({
-            username: userEmail.split("@")[0], 
+            username: userEmail.split("@")[0],
             email: userEmail,
           });
           await newUser.save();
@@ -33,18 +33,24 @@ export const Options = NextAuth({
       }
       return true;
     },
-    async session({ session, user, token }: any) {
+    async session({ session }: any) {
       if (!mongoose.connection.readyState) {
         await mongoose.connect(process.env.MONGO_URL!);
       }
-      const dbuser = await User.findOne({ email: session.user?.email });
+      const dbUser = await User.findOne({ email: session.user?.email });
 
-      console.log(dbuser);
-      session.user.name = dbuser.username;
+      if (dbUser) {
+        session.user.name = dbUser.username;
+      }
       return session;
-    }
-    
+    },
   },
-});
+};
 
-export { Options as GET, Options as POST };
+export const GET = async (req: any, res: any) => {
+  return await NextAuth(req, res, authOptions);
+};
+
+export const POST = async (req: any, res: any) => {
+  return await NextAuth(req, res, authOptions);
+};

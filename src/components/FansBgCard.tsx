@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { fetchuser, fetchpayments } from "@/actions/Useractions";
 import { useSession } from "next-auth/react";
@@ -9,12 +8,6 @@ export function ThreeDCardDemo() {
   const [currentUser, setcurrentUser] = useState({});
   const [payments, setpayments] = useState([]);
   const { data: session }: { data: Session | null } = useSession();
-
-  useEffect(() => {
-    if (session?.user) {
-      get_money_donated_data();
-    }
-  }, [session]);
 
   const get_money_donated_data = async () => {
     const u = await fetchuser("tanmay"); // Await the fetchuser call
@@ -26,9 +19,14 @@ export function ThreeDCardDemo() {
     }
 
     const dbpayments = await fetchpayments(session.user.name);
-    // console.log(dbpayments);
     setpayments(dbpayments);
   };
+  useEffect(() => {
+    if (session?.user) {
+      get_money_donated_data();
+    }
+  }, [get_money_donated_data]);
+
 
   return (
     <div className="payment flex gap-3 mt-20">

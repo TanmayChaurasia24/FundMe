@@ -1,27 +1,27 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 
-const verifyEmail = () => {
+const VerifyEmail = () => {
   const [token, setToken] = useState("");
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(false);
 
-  const verifyUserEmail = async () => {
-    try {
-      const response = await axios.post("/api/users/verifyemail", {
-        token,
-      });
-      setVerified(true);
-      console.log(response);
-    } catch (err: any) {
-      console.error(err.message);
-      setError(true);
-    }
-  };
-
   useEffect(() => {
+    const verifyUserEmail = async () => {
+      try {
+        const response = await axios.post("/api/users/verifyemail", {
+          token,
+        });
+        setVerified(true);
+        console.log(response);
+      } catch (err: any) {
+        console.error(err.message);
+        setError(true);
+      }
+    };
+
     // Use URLSearchParams to get the token from the query parameters
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get("token"); // 'token' should match the query parameter name
@@ -30,10 +30,7 @@ const verifyEmail = () => {
     if (urlToken) {
       setToken(urlToken);
     }
-  }, []);
-
-  useEffect(() => {
-    if (token.length > 0) {
+    if (token) {
       verifyUserEmail();
     }
   }, [token]);
@@ -59,4 +56,4 @@ const verifyEmail = () => {
   );
 };
 
-export default verifyEmail;
+export default VerifyEmail;

@@ -57,7 +57,6 @@ export const POST = async (req: any) => {
       );
     }
 
-    // Redirect to a confirmation page based on `to_user` field
     const redirectUrl = `${process.env.URL}/${updatepayment.to_user}?paymentdone=true`;
     return NextResponse.redirect(redirectUrl);
   } catch (error) {
