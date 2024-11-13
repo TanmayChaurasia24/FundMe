@@ -1,11 +1,51 @@
-"use client"
+"use client";
 
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
+interface FormDataTypes {
+  projectName: string;
+  projectDescription: string;
+  projectLiveLink: string;
+  githubRepoLink: string;
+  fundGoal: number;
+}
 
 const Page = () => {
-  const handleSubmit = (e: any) => {
+  const router = useRouter();
+
+  const [formdata, setformdata] = useState<FormDataTypes>({
+    projectName: "",
+    projectDescription: "",
+    projectLiveLink: "",
+    githubRepoLink: "",
+    fundGoal: 0,
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission here
+
+    try {
+      const response = await axios.post("/api/projects/create", formdata);
+
+      if (response.status === 201) {
+        console.log("Project created successfully");
+        router.push("/");
+      }
+    } catch (error: any) {
+      console.log("Error in making project:", error);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setformdata((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
@@ -21,6 +61,8 @@ const Page = () => {
                 id="projectName"
                 name="projectName"
                 className="rounded-lg p-1 w-[30vw] text-black"
+                onChange={handleChange}
+                value={formdata.projectName}
               />
             </div>
             <div className="flex flex-col mt-5">
@@ -28,40 +70,51 @@ const Page = () => {
                 Project Description (150 characters)
               </label>
               <textarea
-                name="project-description"
+                name="projectDescription"
                 id="projectDescription"
                 rows={5}
                 placeholder="Describe your project"
                 className="rounded-lg p-1 w-[30vw] text-black"
                 maxLength={150}
+                value={formdata.projectDescription}
+                onChange={handleChange}
               ></textarea>
             </div>
             <div className="flex flex-col mt-5">
-              <label htmlFor="projectLink">Project live link</label>
+              <label htmlFor="projectLiveLink">Project Live Link</label>
               <input
                 type="url"
-                id="projectLink"
+                id="projectLiveLink"
+                name="projectLiveLink"
                 placeholder="https://your-project.com"
                 className="rounded-lg p-1 w-[30vw] text-black"
+                value={formdata.projectLiveLink}
+                onChange={handleChange}
               />
             </div>
             <div className="flex flex-col mt-5">
-              <label htmlFor="githubRepo">Github Repository Link</label>
+              <label htmlFor="githubRepoLink">GitHub Repository Link</label>
               <input
                 type="url"
-                id="githubRepo"
+                id="githubRepoLink"
+                name="githubRepoLink"
                 placeholder="https://github.com/username/project"
                 className="rounded-lg p-1 w-[30vw] text-black"
+                value={formdata.githubRepoLink}
+                onChange={handleChange}
               />
             </div>
             <div className="flex flex-col mt-5">
-              <label htmlFor="fundingGoals">Funding Goals (₹)</label>
+              <label htmlFor="fundGoal">Funding Goals (₹)</label>
               <input
                 type="number"
-                id="fundingGoals"
+                id="fundGoal"
+                name="fundGoal"
                 placeholder="₹5000"
                 className="rounded-lg p-1 w-[30vw] text-black"
                 max={20000}
+                value={formdata.fundGoal}
+                onChange={handleChange}
               />
             </div>
             <button
