@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Facebook, Instagram, Twitter, Heart } from "lucide-react"
 import icons8 from "../../public/download.jpg"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 
 export default function HomePage() {
+  const router = useRouter()
   return (
     <div className="flex flex-col min-h-screen bg-gray-950 text-gray-100">
       <main className="flex-1">
@@ -25,7 +27,7 @@ export default function HomePage() {
               </div>
               <div className="space-x-4">
                 <Button className="bg-blue-600 text-white hover:bg-blue-700">Start a Project</Button>
-                <Button variant="outline" className="text-blue-400 border-blue-400 hover:bg-blue-400 hover:text-gray-900">
+                <Button onClick={() => {router.push("/d/donate")}} variant="outline" className="text-blue-400 border-blue-400 hover:bg-blue-400 hover:text-gray-900">
                   Explore Projects
                 </Button>
               </div>
