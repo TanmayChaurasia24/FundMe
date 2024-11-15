@@ -15,10 +15,13 @@ import { useSession } from "next-auth/react";
 
 export function SignupFormDemo() {
   const router = useRouter();
-  const {data:session} = useSession();
-  if(session) {
-    router.push(`/${session.user?.name}`)
-  }
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      router.push(`/${session.user?.name}`);
+    }
+  }, [session]);
 
   const [user, setUser] = useState({
     email: "",
@@ -30,26 +33,17 @@ export function SignupFormDemo() {
 
   const handleLogin = async () => {
     try {
-      setUser({
-        email: "",
-        password: "",
-      });
       setLoading(true);
 
       const response = await axios.post<any>("/api/users/login", user);
 
-      // Check the structure of response.data
+      // Inspect response for proper structure if it contains token
       console.log("Response Data:", response.data);
 
-      // Ensure you are accessing the cookie value correctly
-      const token = response.data.Cookie?.value;
-      if (token) {
-        localStorage.setItem(token, token);
-      } else {
-        console.error("Token not found in response data");
+      if (document.cookie.includes("token")) {
+        setUser({ email: "", password: "" });
+        router.push("/");
       }
-
-      router.push("/");
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "An error occurred during login"
@@ -88,6 +82,7 @@ export function SignupFormDemo() {
             placeholder="projectmayhem@fc.com"
             type="email"
             onChange={handleChange}
+            value={user.email}
           />
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
@@ -97,6 +92,7 @@ export function SignupFormDemo() {
             placeholder="••••••••"
             type="password"
             onChange={handleChange}
+            value={user.password}
           />
         </LabelInputContainer>
 

@@ -17,7 +17,7 @@ const Navbar = () => {
           <span className="ml-2 text-xl font-bold text-blue-400">Fundme</span>
         </Link>
         <nav className="ml-auto justify-center items-center flex gap-4 sm:gap-6">
-          {!session ? (
+          {!session? (
             <>
               <Link
                 className="text-sm font-medium hover:text-blue-400 transition-colors"

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import {
   Card,
@@ -24,6 +25,8 @@ interface AllProjectType {
 }
 
 export default function Page() {
+
+  const router = useRouter();
   const [allProjects, setProjects] = useState<AllProjectType[]>([]);
 
   useEffect(() => {
@@ -38,16 +41,7 @@ export default function Page() {
           return;
         }
 
-        const projects = response.data.map((project) => ({
-          id: project.id,
-          projectName: project.projectName,
-          projectDescription: project.projectDescription,
-          projectLiveLink: project.projectLiveLink,
-          githubRepoLink: project.githubRepoLink,
-          fundGoal: project.fundGoal,
-        }));
-
-        setProjects(projects);
+        setProjects(response.data);
       } catch (error: any) {
         console.log("Error in fetching all the projects", error);
       }
@@ -74,8 +68,25 @@ export default function Page() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-col space-y-2">
-                    {project.projectLiveLink.length > 1 ? (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col space-y-2">
+                      {project.projectLiveLink && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          className="bg-blue-700 border-none rounded-lg"
+                        >
+                          <a
+                            href={project.projectLiveLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center"
+                          >
+                            <Globe className="mr-2 h-4 w-4" /> Live Project
+                          </a>
+                        </Button>
+                      )}
                       <Button
                         variant="outline"
                         size="sm"
@@ -83,32 +94,26 @@ export default function Page() {
                         className="bg-blue-700 border-none rounded-lg"
                       >
                         <a
-                          href={project.projectLiveLink}
+                          href={project.githubRepoLink}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center"
                         >
-                          <Globe className="mr-2 h-4 w-4" /> Live Project
+                          <Github className="mr-2 h-4 w-4" /> GitHub Repository
                         </a>
                       </Button>
-                    ) : (
-                      <p></p>
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="bg-blue-700 border-none rounded-lg"
-                    >
-                      <a
-                        href={project.githubRepoLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center"
-                      >
-                        <Github className="mr-2 h-4 w-4" /> GitHub Repository
-                      </a>
-                    </Button>
+                    </div>
+                    {/* <div>
+                      <Progress
+                        value={40}
+                        max={project.fundGoal}
+                        className="rounded-lg w-full bg-purple-500"
+                        style={{
+                          backgroundColor: "white",
+                          color: "white",
+                        }}
+                      />
+                    </div> */}
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
@@ -116,7 +121,7 @@ export default function Page() {
                     <DollarSign className="mr-1 h-4 w-4" />
                     Fund Goal: ${project.fundGoal.toLocaleString()}
                   </Badge>
-                  <Button>Fund This Project</Button>
+                  <Button onClick={() => {router.push(`givefund/${project.projectName}`)}}>Fund This Project</Button>
                 </CardFooter>
               </Card>
             ))}
