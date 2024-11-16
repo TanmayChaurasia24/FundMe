@@ -2,7 +2,7 @@ import { dbconnect } from '../../../../db/db';
 import User from '../../../../models/userModel';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import { sendemail } from '@/helpers/mailer';
+
 
 // Connect to the database
 dbconnect();
@@ -35,8 +35,15 @@ export const POST = async (req: NextRequest) => {
 
         const saveduser = await newuser.save();
         console.log("User saved:", saveduser);
+          const response = NextResponse.json(
+            {
+              message: "sign up success",
+              user: saveduser
+            },
+            { status: 201 },
+          );
 
-        return NextResponse.json({ message: 'User registration successful',success:'true' }, { status: 200 });
+        return response
 
     } catch (error: any) {
         console.error("Error in POST request:", error.message);

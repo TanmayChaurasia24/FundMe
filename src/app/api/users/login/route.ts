@@ -5,51 +5,56 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
-// Connect to the database
 dbconnect();
 
 export const POST = async (req: NextRequest) => {
   try {
-    const reqbody = await req.json();
-    const { email, password } = reqbody;
+    const reqBody = await req.json();
+    const { email, password } = reqBody;
 
-    console.log("Request Body:", reqbody);
+    console.log("Request Body:", reqBody);
 
     const user = await User.findOne({ email });
     if (!user) {
-      console.log("User dont exists with email:", email);
-      return NextResponse.json({ error: "User not exists" }, { status: 400 });
+      console.log("User doesn't exist with email:", email);
+      return NextResponse.json({ error: "User does not exist" }, { status: 400 });
     }
 
-    const compass = await bcrypt.compare(password, user.password);
-
-    if (!compass) {
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      console.log("Password mismatch for user:", email);
       return NextResponse.json(
-        { error: "check your password" },
+        { error: "Incorrect password" },
         { status: 400 }
       );
     }
 
-    const tokendata = {
+
+    const tokenData = {
       id: user._id,
       email: user.email,
     };
 
-    const jwttoken = await jwt.sign(tokendata, process.env.TOKEN_SECRET!, {
+
+    const jwtToken = jwt.sign(tokenData, process.env.TOKEN_SECRET!, {
       expiresIn: "1d",
     });
 
-    cookies().set("token", jwttoken, {
+    const cookieStore = cookies();
+    cookieStore.set("token", jwtToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 24 * 60 * 60, // 1 day
+      sameSite: "lax",
     });
-    const Token = cookies().get("token");
+
     const response = NextResponse.json(
       {
-        message: "loged in success",
-        Cookie: Token
+        message: "Logged in successfully",
+        token: jwtToken,
       },
-      { status: 201 },
+      { status: 201 }
     );
 
     return response;

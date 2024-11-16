@@ -34,13 +34,14 @@ export function SignupFormDemo() {
   const handleLogin = async () => {
     try {
       setLoading(true);
-
+      console.log(user);
+      
       const response = await axios.post<any>("/api/users/login", user);
 
-      // Inspect response for proper structure if it contains token
       console.log("Response Data:", response.data);
 
-      if (document.cookie.includes("token")) {
+      if (response?.data?.token) {
+        localStorage.setItem("token", response.data.token)
         setUser({ email: "", password: "" });
         router.push("/");
       }

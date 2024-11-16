@@ -1,23 +1,40 @@
-"use client"
+"use client";
 
 import { MountainIcon } from "lucide-react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
+  const [isauthenticated, setauthenticated] = useState(false);
   const { data: session }: { data: Session | null } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      setauthenticated(true);
+    } else if (localStorage.getItem("token")) {
+      setauthenticated(true);
+    }
+  }, [session || localStorage.getItem("token")]);
+
+  const handlelogout = () => {
+    if(session) {
+      signOut()
+    } else if(localStorage.getItem("token")) {
+      localStorage.removeItem("token")
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-950 text-gray-100">
-      
       <header className="px-4 lg:px-6 h-14 flex items-center border-b border-gray-800">
         <Link className="flex items-center justify-center" href="#">
           <MountainIcon className="h-6 w-6 text-blue-400" />
           <span className="ml-2 text-xl font-bold text-blue-400">Fundme</span>
         </Link>
         <nav className="ml-auto justify-center items-center flex gap-4 sm:gap-6">
-          {!session? (
+          {!isauthenticated ? (
             <>
               <Link
                 className="text-sm font-medium hover:text-blue-400 transition-colors"
@@ -60,14 +77,14 @@ const Navbar = () => {
               </Link>
               <button
                 className="text-sm font-medium hover:text-blue-400 transition-colors"
-                onClick={() => signOut()}
+                onClick={handlelogout}
               >
                 Logout
               </button>
 
               <Link
                 className="text-sm font-medium hover:text-blue-400 transition-colors"
-                href={`/${session.user?.name}`}
+                href={`/${session?.user?.name}`}
               >
                 My Page
               </Link>
