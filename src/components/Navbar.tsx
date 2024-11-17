@@ -1,6 +1,6 @@
 "use client";
 
-import { MountainIcon } from "lucide-react";
+// import { MountainIcon } from "lucide-react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Session } from "next-auth";
@@ -13,10 +13,8 @@ const Navbar = () => {
   useEffect(() => {
     if (session) {
       setauthenticated(true);
-    } else if (localStorage.getItem("token")) {
-      setauthenticated(true);
     }
-  }, [session || localStorage.getItem("token")]);
+  }, [session ]);
 
   const handlelogout = () => {
     if(session) {
@@ -30,7 +28,7 @@ const Navbar = () => {
     <div className="flex flex-col min-h-screen bg-gray-950 text-gray-100">
       <header className="px-4 lg:px-6 h-14 flex items-center border-b border-gray-800">
         <Link className="flex items-center justify-center" href="#">
-          <MountainIcon className="h-6 w-6 text-blue-400" />
+          {/* {<MountainIcon className="h-6 w-6 text-blue-400" />} */}
           <span className="ml-2 text-xl font-bold text-blue-400">Fundme</span>
         </Link>
         <nav className="ml-auto justify-center items-center flex gap-4 sm:gap-6">

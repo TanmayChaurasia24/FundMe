@@ -26,8 +26,9 @@ const userSchema = new mongoose.Schema<UserDefine>({
     unique: true,
   },
   password: {
-    type: String, // Make password optional for OAuth users
+    type: String,
     required: false,
+    select: false
   },
   profilepic: {
     type: String,
