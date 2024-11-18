@@ -4,13 +4,16 @@ import { useRouter } from "next/navigation";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
-import axios from "axios"; // Added axios import
-import toast from "react-hot-toast";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import User from "@/models/userModel";
+import bcrypt from "bcrypt"
 
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
+import { dbconnect } from "@/db/db";
+import { handleSignup } from "@/actions/serveractions";
 
 export function SignupFormDemo() {
-
   const router = useRouter();
 
   const [user, setUser] = useState({
@@ -22,36 +25,10 @@ export function SignupFormDemo() {
   const [buttonDisable, setButtonDisable] = useState(true); // Initially disabled
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async () => {
-    try {
-      setUser({
-        username: "",
-        email: "",
-        password: "",
-      });
-      setLoading(true);
-      const response = await axios.post("/api/users/signup", user); // Calls signup API with user data
-      console.log("Signup successful:", response);
-      router.push("/login");
-    } catch (error: any) {
-      console.error("Signup failed:", error);
-      toast.error(
-        error.response?.data?.message || "An error occurred during signup"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     const { email, password, username } = user;
     setButtonDisable(!(email && password && username)); // Button is disabled if any field is empty
   }, [user]);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleSignup(); // Calls handleSignup when form is submitted
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -63,13 +40,17 @@ export function SignupFormDemo() {
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
         Welcome to FundMe
       </h2>
-      <form className="my-8" onSubmit={handleSubmit}>
+      <form
+        className="my-8"
+        action={handleSignup}
+      >
         <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
           <LabelInputContainer>
             <Label htmlFor="username">UserName</Label>
             <Input
               id="username"
               placeholder="Tyler"
+              name="username"
               type="text"
               value={user.username} // Controlled input
               onChange={handleChange} // Handle changes
@@ -81,6 +62,7 @@ export function SignupFormDemo() {
           <Input
             id="email"
             placeholder="projectmayhem@fc.com"
+            name="email"
             type="email"
             value={user.email} // Controlled input
             onChange={handleChange} // Handle changes
@@ -92,6 +74,7 @@ export function SignupFormDemo() {
             id="password"
             placeholder="••••••••"
             type="password"
+            name="password"
             value={user.password} // Controlled input
             onChange={handleChange} // Handle changes
           />

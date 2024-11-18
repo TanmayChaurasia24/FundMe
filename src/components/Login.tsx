@@ -4,13 +4,11 @@ import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
-import axios from "axios";
 import { signIn } from "next-auth/react";
-import {
-  IconBrandGithub,
-  IconBrandGoogle,
-} from "@tabler/icons-react";
-import toast from "react-hot-toast";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
+import { handleLogin } from "@/actions/serveractions";
 import { useSession } from "next-auth/react";
 
 export function SignupFormDemo() {
@@ -31,28 +29,6 @@ export function SignupFormDemo() {
   const [buttonDisable, setButtonDisable] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    try {
-      setLoading(true);
-      console.log(user);
-      
-      const response = await axios.post<any>("/api/users/login", user);
-
-      console.log("Response Data:", response.data);
-
-      if (response?.data?.token) {
-        localStorage.setItem("token", response.data.token)
-        setUser({ email: "", password: "" });
-        router.push("/");
-      }
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "An error occurred during login"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -64,10 +40,6 @@ export function SignupFormDemo() {
     setButtonDisable(!(email && password));
   }, [user]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleLogin();
-  };
 
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
@@ -75,13 +47,14 @@ export function SignupFormDemo() {
         Welcome to FundMe
       </h2>
 
-      <form className="my-8" onSubmit={handleSubmit}>
+      <form className="my-8" action={handleLogin}>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="email">Email Address</Label>
           <Input
             id="email"
             placeholder="projectmayhem@fc.com"
             type="email"
+            name="email"
             onChange={handleChange}
             value={user.email}
           />
@@ -93,6 +66,7 @@ export function SignupFormDemo() {
             placeholder="••••••••"
             type="password"
             onChange={handleChange}
+            name="email"
             value={user.password}
           />
         </LabelInputContainer>
