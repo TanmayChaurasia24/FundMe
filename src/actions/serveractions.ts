@@ -1,126 +1,106 @@
 "use server";
-import { Bounce, toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import User from "@/models/userModel";
 import bcrypt from "bcrypt";
 import { dbconnect } from "@/db/db";
+import User from "@/models/userModel";
 import { redirect } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { cookies } from "next/headers";
 
 export const handleSignup = async (formdata: FormData) => {
+  console.log("Inside signup handler");
 
   const username = formdata.get("username") as string | undefined;
   const email = formdata.get("email") as string | undefined;
   const password = formdata.get("password") as string | undefined;
 
   if (!username || !email || !password) {
-    toast("🦄 Enter all credentials", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-      transition: Bounce,
-    });
-    return;
+    console.error("Missing credentials");
+    return {
+      message: "Please enter all required credentials",
+      status: 400,
+      success: false,
+    };
   }
 
   try {
     await dbconnect();
-    const exist_user = await User.findOne({ email });
+    console.log("Database connected");
 
-    if (exist_user) {
-      toast("🦄 User already exists!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-      return;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      console.warn(`User already exists with email: ${email}`);
+      return {
+        message: "User already exists. Please log in.",
+        status: 409,
+        success: false,
+      };
     }
 
-    const hashedpass = await bcrypt.hash(password, 20);
-    const newUser = new User({ username, email, hashedpass });
-    await newUser.save();
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("Password hashed");
 
-    toast("🦄 User created successfully!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-      transition: Bounce,
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
     });
 
-    redirect('/login')
+    console.log("New user created:", newUser);
+
+    return redirect("/login");
   } catch (error) {
-    // Handle any errors
     console.error("Error during user creation:", error);
-    toast("🦄 Something went wrong!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-      transition: Bounce,
-    });
+    return {
+      message: "An error occurred while signing up. Please try again later.",
+      status: 500,
+      success: false,
+    };
   }
 };
 
 export const handleLogin = async (formdata: FormData) => {
-    
-    const email = formdata.get("email") as string | undefined;
-    const password = formdata.get("password") as string | undefined;
+  console.log("Inside login handler");
 
-    if (!email || !password) {
-      toast("🦄 Enter all credentials", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-      return;
+  const email = formdata.get("email")?.toString();
+  const password = formdata.get("password")?.toString();
+
+  if (!email || !password) {
+    console.error("Missing credentials");
+    return {
+      message: "Please enter both email and password",
+      status: 400,
+      success: false,
+    };
+  }
+
+  try {
+    console.log("stage 2");
+
+    const result = await User.findOne({ email });
+
+    if (!result) {
+      return redirect("/signup");
     }
 
-    try {
-      await signIn("credentials", {
-        email,
-        password,
-        redirect: true,
-        redirectTo: "/",
-      });
-    } catch (error) {
-      // Handle any errors
-      console.error("Error during user creation:", error);
-      toast("🦄 Something went wrong!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+    console.log("stage 3");
+    const iscorrectpass = await bcrypt.compare(password , result.password);
+    if (!iscorrectpass) {
+      return redirect("/login");
     }
-}
+    const cookiestore = await cookies();
+    cookiestore.set("session", result._id, {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    console.log("User logged in successfully");
+
+    return redirect("/");
+  } catch (error) {
+    console.error("Error during login:", error);
+    return {
+      message: "An error occurred while logging in. Please try again later.",
+      status: 500,
+      success: false,
+    };
+  }
+};

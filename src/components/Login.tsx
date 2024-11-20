@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
@@ -29,25 +30,59 @@ export function SignupFormDemo() {
   const [buttonDisable, setButtonDisable] = useState(true);
   const [loading, setLoading] = useState(false);
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setUser((prev) => ({ ...prev, [id]: value }));
   };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+  
+    const formdata = new FormData();
+    formdata.append("email", user.email);
+    formdata.append("password", user.password);
+  
+    try {
+      const response = await handleLogin(formdata);
+  
+      if (response?.success) {
+        toast.success(response.message || "Login successful!", {
+          autoClose: 3000,
+          transition: Bounce,
+        });
+        router.push("/");
+      } else {
+        toast.error(response?.message || "Login failed.", {
+          autoClose: 3000,
+          transition: Bounce,
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("An unexpected error occurred.", {
+        autoClose: 3000,
+        transition: Bounce,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   useEffect(() => {
     const { email, password } = user;
     setButtonDisable(!(email && password));
   }, [user]);
 
-
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
+      <ToastContainer />
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
         Welcome to FundMe
       </h2>
 
-      <form className="my-8" action={handleLogin}>
+      <form className="my-8" onSubmit={handleSubmit}>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="email">Email Address</Label>
           <Input
@@ -65,8 +100,8 @@ export function SignupFormDemo() {
             id="password"
             placeholder="••••••••"
             type="password"
+            name="password"
             onChange={handleChange}
-            name="email"
             value={user.password}
           />
         </LabelInputContainer>
@@ -76,7 +111,7 @@ export function SignupFormDemo() {
             buttonDisable ? "opacity-50 cursor-not-allowed" : ""
           }`}
           type="submit"
-          disabled={buttonDisable}
+          disabled={buttonDisable || loading}
         >
           {loading ? "Processing..." : "Login"} &rarr;
           <BottomGradient />
