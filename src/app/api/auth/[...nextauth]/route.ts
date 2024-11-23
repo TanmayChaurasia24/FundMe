@@ -6,8 +6,7 @@ import User from "@/models/userModel";
 import { dbconnect } from "@/db/db";
 
 
-const authOptions: NextAuthOptions = NextAuth({
-  debug: true,
+const authOptions = NextAuth({
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
