@@ -1,38 +1,29 @@
 "use client";
 
-// import { MountainIcon } from "lucide-react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Session } from "next-auth";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 
 const Navbar = () => {
-  const [isauthenticated, setauthenticated] = useState(false);
-  const { data: session }: { data: Session | null } = useSession();
-
+  const router = useRouter();
+  const { data: session } = useSession();
   useEffect(() => {
-    if (session) {
-      setauthenticated(true);
+    if(session?.user?.name) {
+      console.log(session);
+      
+      router.push(`/${session?.user?.name}`)
     }
-  }, [session ]);
-
-  const handlelogout = () => {
-    if(session) {
-      signOut()
-    } else if(localStorage.getItem("token")) {
-      localStorage.removeItem("token")
-    }
-  }
-
+  },[])
   return (
     <div className="flex flex-col min-h-screen bg-gray-950 text-gray-100">
       <header className="px-4 lg:px-6 h-14 flex items-center border-b border-gray-800">
-        <Link className="flex items-center justify-center" href="#">
-          {/* {<MountainIcon className="h-6 w-6 text-blue-400" />} */}
+        <Link className="flex items-center justify-center" href="/">
           <span className="ml-2 text-xl font-bold text-blue-400">Fundme</span>
         </Link>
         <nav className="ml-auto justify-center items-center flex gap-4 sm:gap-6">
-          {!isauthenticated ? (
+          {!session ? (
             <>
               <Link
                 className="text-sm font-medium hover:text-blue-400 transition-colors"
@@ -75,7 +66,7 @@ const Navbar = () => {
               </Link>
               <button
                 className="text-sm font-medium hover:text-blue-400 transition-colors"
-                onClick={handlelogout}
+                onClick={() => signOut()}
               >
                 Logout
               </button>
