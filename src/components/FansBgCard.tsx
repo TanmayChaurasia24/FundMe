@@ -1,17 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { fetchuser, fetchpayments } from "@/actions/Useractions";
+import { fetchuser, fetchpayments } from "../actions/Useractions";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 
 export function ThreeDCardDemo() {
-  const [currentUser, setcurrentUser] = useState({});
+
   const [payments, setpayments] = useState([]);
   const { data: session }: { data: Session | null } = useSession();
 
   const get_money_donated_data = async () => {
     const u = await fetchuser("tanmay"); // Await the fetchuser call
-    setcurrentUser(u);
 
     if (!session || !session.user) {
       console.log("Session not found");
@@ -25,7 +24,7 @@ export function ThreeDCardDemo() {
     if (session?.user) {
       get_money_donated_data();
     }
-  }, [get_money_donated_data]);
+  }, []);
 
 
   return (

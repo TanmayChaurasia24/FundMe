@@ -1,8 +1,8 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { Button } from "../components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
+import { Input } from "../components/ui/input"
 import { Facebook, Instagram, Twitter, Heart } from "lucide-react"
 import icons8 from "../../public/download.jpg"
 import Link from "next/link"

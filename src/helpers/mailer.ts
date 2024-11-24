@@ -1,4 +1,4 @@
-import User from "@/models/userModel";
+import User from "../models/userModel";
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
 interface incomingData {

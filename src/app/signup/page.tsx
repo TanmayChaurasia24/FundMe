@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { SignupFormDemo } from "@/components/Signup";
+import { SignupFormDemo } from "../../components/Signup";
 
 const Signup = () => {
     const [loading, setLoading] = useState(false);

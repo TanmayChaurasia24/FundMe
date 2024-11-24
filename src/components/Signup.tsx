@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react"
 
 import { signIn } from "next-auth/react";
 

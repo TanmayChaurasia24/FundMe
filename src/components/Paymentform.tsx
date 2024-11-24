@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { cn } from "@/lib/utils";
-import { initiate } from "@/actions/Useractions";
+import { cn } from "../lib/utils";
+import { initiate } from "../actions/Useractions";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 

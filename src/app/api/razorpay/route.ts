@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils";
-import PaymentModel from "@/models/paymentModel";
-import { dbconnect } from "@/db/db";
+import PaymentModel from "../../../models/paymentModel";
+import { dbconnect } from "../../../db/db";
 
 export const POST = async (req: any) => {
   try {

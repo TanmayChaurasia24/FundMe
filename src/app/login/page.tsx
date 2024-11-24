@@ -1,11 +1,10 @@
-"use client";
-import { Boxes } from "../../components/ui/background-boxes";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import DotPattern from "../../components/magicui/dot-pattern";
 import React from 'react';
-import { SignupFormDemo } from '@/components/Login';
+import { SignupFormDemo } from "../../components/Login";
 
-export function DotPatternDemo() {
+// Properly type the DotPatternDemo component
+export const DotPatternDemo: React.FC = () => {
   return (
     <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background md:shadow-xl">
       <p className="z-10 whitespace-pre-wrap text-center text-5xl font-medium tracking-tighter text-black dark:text-white">
@@ -18,9 +17,10 @@ export function DotPatternDemo() {
       />
     </div>
   );
-}
+};
 
-const login = () => {
+// Properly type the login component
+const Login: React.FC = () => {
   return (
     <div className="flex justify-center items-center overflow-y-hidden h-[100vh] scroll-hide">
       <div className="h-full w-full relative overflow-hidden bg-slate-900 flex flex-col items-center justify-center rounded-lg">
@@ -33,4 +33,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;

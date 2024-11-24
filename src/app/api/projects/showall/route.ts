@@ -1,6 +1,6 @@
-import Project from "@/models/ProjectModel";
+import Project from "../../../../models/ProjectModel";
 import { NextRequest, NextResponse } from "next/server";
-import { dbconnect } from "@/db/db";
+import { dbconnect } from "../../../../db/db";
 
 dbconnect();
 

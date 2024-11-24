@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { ThreeDCardDemo } from "@/components/FansBgCard";
-import { PlaceholdersAndVanishInputDemo } from "@/components/Makepayment";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThreeDCardDemo } from "../components/FansBgCard";
+import { PlaceholdersAndVanishInputDemo } from "../components/Makepayment";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter, useSearchParams } from "next/navigation";

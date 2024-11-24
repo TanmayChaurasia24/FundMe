@@ -1,4 +1,4 @@
-import Paymentpage from '@/components/Paymentpage'
+import Paymentpage from '../../components/Paymentpage'
 
 const page = ({params}) => {
   return (

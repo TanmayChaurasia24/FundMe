@@ -3,7 +3,7 @@ import User from '../../../../models/userModel';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { getDataFromToken } from '@/helpers/getDataFromToken';
+import { getDataFromToken } from '../../../../helpers/getDataFromToken';
 
 // Connect to the database
 dbconnect();
