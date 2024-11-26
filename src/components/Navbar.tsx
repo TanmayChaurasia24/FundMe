@@ -4,18 +4,19 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import { Session } from "next-auth"; 
 
 const Navbar = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session }: { data: Session | null } = useSession();
+
   useEffect(() => {
-    if(session?.user?.name) {
+    if (session) {
       console.log(session);
-      
-      router.push(`/${session?.user?.name}`)
+      router.push(`/${session.user?.name}`);
     }
-  },[])
+  }, [session]);
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-950 text-gray-100">
       <header className="px-4 lg:px-6 h-14 flex items-center border-b border-gray-800">
@@ -73,7 +74,7 @@ const Navbar = () => {
 
               <Link
                 className="text-sm font-medium hover:text-blue-400 transition-colors"
-                href={`/${session?.user?.name}`}
+                href={`/${session.user?.name}`}
               >
                 My Page
               </Link>

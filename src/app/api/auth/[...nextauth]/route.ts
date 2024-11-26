@@ -44,7 +44,7 @@ const authOptions: any = NextAuth({
       return true;
     },
 
-    async session({ session }) {
+    async session({ session,token,user }) {
       console.log("inside session callback");
       
       if (session?.user?.email) {
@@ -56,7 +56,7 @@ const authOptions: any = NextAuth({
       }
       console.log("exiting session callback");
       
-      return session || {};
+      return session;
     },
   },
 })

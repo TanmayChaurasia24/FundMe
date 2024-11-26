@@ -7,7 +7,7 @@ ENV NODE_ENV=production
 FROM base as builder
 WORKDIR /app
 COPY . .
-RUN npm ci  # Use npm ci for clean installs without dev dependencies
+RUN npm install 
 RUN npm run build  # Build your app
 
 
