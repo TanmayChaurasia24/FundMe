@@ -4,7 +4,7 @@ import { SessionProvider } from "next-auth/react";
 
 type SessionWrapperProps = {
   children: React.ReactNode;
-  session: any; // Adjust this type as needed
+  session: any;
 };
 
 const SessionWrapper: React.FC<SessionWrapperProps> = ({ children, session }) => {
@@ -16,3 +16,4 @@ const SessionWrapper: React.FC<SessionWrapperProps> = ({ children, session }) =>
 };
 
 export default SessionWrapper;
+

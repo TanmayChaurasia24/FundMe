@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import SessionWrapper from "../components/Session-Wrapper";
 import  Navbar from "../components/Navbar";
-import { getSession } from "next-auth/react"; // Adjust import as needed
+import { getSession } from "next-auth/react"; 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,8 +16,11 @@ export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
+  
 }) {
-  const session = await getSession(); // Fetch session data here
+  const session = await getSession(); 
+  console.log("session is: " + session);
+  
 
   return (
     <html lang="en">

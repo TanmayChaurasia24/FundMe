@@ -6,7 +6,7 @@ import User from "../../../../models/userModel";
 import { dbconnect } from "../../../../db/db";
 
 
-const authOptions: any = NextAuth({
+export const authOptions: any = NextAuth({
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
@@ -44,20 +44,22 @@ const authOptions: any = NextAuth({
       return true;
     },
 
-    async session({ session,token,user }) {
+    async session({ session, token, user }) {
       console.log("inside session callback");
-      
-      if (session?.user?.email) {
-        await dbconnect();
-        const dbUser = await User.findOne({ email: session.user.email });
-        if (dbUser) {
-          session.user.name = dbUser.username;
+      try {
+        if (session?.user?.email) {
+          await dbconnect();
+          const dbUser = await User.findOne({ email: session.user.email });
+          if (dbUser) {
+            session.user.name = dbUser.username;
+          }
         }
+      } catch (error) {
+        console.error("Error in session callback:", error);
       }
       console.log("exiting session callback");
-      
       return session;
-    },
+    }    
   },
 })
 
