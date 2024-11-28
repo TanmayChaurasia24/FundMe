@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import SessionWrapper from "../components/Session-Wrapper";
+
 import  Navbar from "../components/Navbar";
-import { getSession } from "next-auth/react"; 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,14 +17,11 @@ export default async function RootLayout({
   children: React.ReactNode;
   
 }) {
-  const session = await getSession(); 
-  console.log("session is: " + session);
-  
 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionWrapper session={session}>
+
           <div className="overflow-hidden">
             <div className="h-[10vh]">
               <Navbar />
@@ -34,7 +30,7 @@ export default async function RootLayout({
               {children}
             </div>
           </div>
-        </SessionWrapper>
+
       </body>
     </html>
   );

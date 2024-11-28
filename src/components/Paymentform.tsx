@@ -4,8 +4,8 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "../lib/utils";
 import { initiate } from "../actions/Useractions";
-import { useSession } from "next-auth/react";
-import { Session } from "next-auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../firebase"; // Ensure Firebase is initialized in this file
 
 interface RazorpayOptions {
   key_id: string;
@@ -36,17 +36,17 @@ interface TypePaymentForm {
 }
 
 export function SignupFormDemo() {
-  const { data: session }: { data: Session | null } = useSession();
+  const [user, setUser] = useState<any>(null); // Firebase authenticated user
   const [paymentform, setPaymentForm] = useState<TypePaymentForm>({
     name: "",
     message: "",
     amount: 0,
   });
 
-  // Step 1: State to track if Razorpay SDK has loaded
+  // State to track if Razorpay SDK has loaded
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
 
-  // Step 2: Load Razorpay script when component mounts
+  // Load Razorpay script when component mounts
   useEffect(() => {
     const loadRazorpayScript = () => {
       const script = document.createElement("script");
@@ -56,6 +56,16 @@ export function SignupFormDemo() {
       document.body.appendChild(script);
     };
     loadRazorpayScript();
+  }, []);
+
+  // Track Firebase authentication state
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe(); // Cleanup listener on component unmount
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,19 +78,20 @@ export function SignupFormDemo() {
       return;
     }
 
-    if (!session || !session.user) {
-      console.error("User session not found");
+    if (!user) {
+      console.error("User not authenticated");
       return;
     }
-    const userName = session.user.name || "Guest";
 
-    let a = await initiate(amount, userName, paymentform);
-    let orderId = a.id;
-    console.log(amount);
-    
+    const userName = user.displayName || "Guest";
+    const userEmail = user.email || "email@example.com";
+
+    let orderResponse = await initiate(amount, userName, paymentform);
+    let orderId = orderResponse.id;
+
     const options: RazorpayOptions = {
       key_id: process.env.KEY_ID!, // Replace with your actual Razorpay Key ID
-      amount: String(amount  / 100), // Convert amount to paise
+      amount: String(amount / 100), // Convert amount to paise
       currency: "INR",
       name: userName,
       description: "Test Transaction",
@@ -89,7 +100,7 @@ export function SignupFormDemo() {
       callback_url: "http://localhost:3000/api/razorpay",
       prefill: {
         name: paymentform.name || "Guest",
-        email: session.user.email || "email@example.com",
+        email: userEmail,
         contact: "9000090000",
       },
       notes: {
@@ -100,18 +111,14 @@ export function SignupFormDemo() {
       },
     };
 
-    console.log(amount);
-    
-
     const rzp1 = new (window as any).Razorpay(options);
     rzp1.open();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     pay(Number(paymentform.amount) * 100);
   };
-
 
   return (
     <div className="max-w-md w-screen mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-neutral-200 dark:bg-black">
@@ -132,7 +139,9 @@ export function SignupFormDemo() {
             />
           </LabelInputContainer>
           <LabelInputContainer>
-            <Label htmlFor="message">Message <span>(in 100 characters)</span></Label>
+            <Label htmlFor="message">
+              Message <span>(in 100 characters)</span>
+            </Label>
             <Input
               id="message"
               placeholder="Big Fan Brother"
