@@ -16,10 +16,15 @@ import {
   IconBrandGoogle,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import { GoogleAuthProvider, signInWithPopup,GithubAuthProvider } from "firebase/auth";
 
 const auth = getAuth(app);
 
 export function SignupFormDemo() {
+
+  const google = new GoogleAuthProvider();
+  const github = new GithubAuthProvider();
+
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -28,6 +33,35 @@ export function SignupFormDemo() {
   const [success, setSuccess] = useState("");
 
   const router = useRouter();
+
+  
+  const signinwithgoogle = () => {
+    signInWithPopup(auth, google)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        GoogleAuthProvider.credentialFromResult(result);
+        const user = result.user;
+        router.push(`/${user.displayName}`)
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const signiniwithgithub = () => {
+    signInWithPopup(auth,github)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      GithubAuthProvider.credentialFromResult(result);
+      const user = result.user;
+      router.push(`/${user.displayName}`)
+      
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
 
   const signupUser = async () => {
     try {
@@ -143,7 +177,7 @@ export function SignupFormDemo() {
 
       <div className="flex flex-col space-y-4">
         <button
-          onClick={() => signIn("github")}
+          onClick={signiniwithgithub}
           className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900"
           type="button"
         >
@@ -153,7 +187,7 @@ export function SignupFormDemo() {
           </span>
         </button>
         <button
-          onClick={() => signIn("google")}
+          onClick={signinwithgoogle}
           className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900"
           type="button"
         >
