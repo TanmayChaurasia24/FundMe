@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { app } from "../../firebase";
-import { CldUploadButton } from "next-cloudinary";
+import { AvatarUploader } from "@/components/avatar-uploader";
 
 export default function ProfilePage() {
   const [username, setUsername] = useState<string>("");
@@ -54,12 +54,14 @@ export default function ProfilePage() {
 
   const handleAvatarUpload = async (result: any) => {
     try {
-      const { secure_url } = result.info;
-      await updateProfile(auth.currentUser!, { photoURL: secure_url });
-      setAvatarUrl(secure_url);
-      setSuccess("Image Uploaded successfully");
-      router.push(`/${user.displayName || "defaultUsername"}`); 
-      router.refresh();
+      // const { secure_url } = result.info;
+      // await updateProfile(auth.currentUser!, { photoURL: secure_url });
+      // setAvatarUrl(secure_url);
+      // setSuccess("Image Uploaded successfully");
+      // router.push(`/${user.displayName || "defaultUsername"}`); 
+      // router.refresh();
+      console.log(result);
+      
     } catch (error) {
       console.error("Error updating avatar:", error);
       alert("Failed to update avatar.");
@@ -69,7 +71,6 @@ export default function ProfilePage() {
   if (!user) {
     return <div>Loading...</div>;
   }
-
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md bg-gray-800 border-gray-700">
@@ -88,30 +89,10 @@ export default function ProfilePage() {
                 <AvatarImage src={avatarUrl} alt={username} />
                 <AvatarFallback>{username?.slice(0, 2)?.toUpperCase() || "NA"}</AvatarFallback>
               </Avatar>
-              <CldUploadButton
-                options={{ multiple: false }}
-                uploadPreset={cloudPresetName}
-                onUpload={handleAvatarUpload}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-camera"
-                >
-                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-                  <circle cx="12" cy="13" r="3" />
-                </svg>
-              </CldUploadButton>
+              <AvatarUploader onUploadSuccess={handleAvatarUpload} />
             </div>
             <form onSubmit={handleUsernameChange} className="w-full space-y-4">
-              <div className="space-y-2 text-center">
+              <div className="space-y-2 text-center flex flex-col justify-center items-center">
                 <Label htmlFor="username" className="text-neutral-200">
                   <span className="font-bold text-blue-400">Username:</span> {username}
                 </Label>
