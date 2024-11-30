@@ -32,7 +32,7 @@ interface AllProjectType {
 }
 
 export default function UsernamePage({ username }: { username: string }) {
-  const [user, setUser] = useState<any>(null);
+  const [myuser, setUser] = useState<any>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
   const [myprojects, setMyProjects] = useState<AllProjectType[]>([]);
   const auth = getAuth(app);
@@ -55,16 +55,27 @@ export default function UsernamePage({ username }: { username: string }) {
 
   useEffect(() => {
     const fetchProjects = async () => {
+      if (!myuser) {
+        return; 
+      }
+    
       try {
-        const response = await axios.get<AllProjectType[]>(`/api/projects/${username.replace('_'," ")}`);
+        console.log("username before req: " + username);
+        const response = await axios.post<any>(
+          'api/projects/personal', // Endpoint for your API
+          { username } // Send username in the request body
+        );
+        console.log(response);
         setMyProjects(response.data);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
     };
-
+    
+  
     fetchProjects();
-  }, [username]);
+  }, [myuser]); 
+  
 
   useEffect(() => {
     if (searchParams.get("paymentdone") === "true") {
