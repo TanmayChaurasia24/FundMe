@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../../../firebase"; // Ensure Firebase is initialized here
+
 
 interface FormDataTypes {
   projectName: string;
@@ -10,16 +13,39 @@ interface FormDataTypes {
   projectLiveLink: string;
   githubRepoLink: string;
   fundGoal: number;
+  username: string
 }
 
 const Page = () => {
   const router = useRouter();
+  const auth = getAuth(app)
+  const [user,setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // Set up Firebase auth listener
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser); // Store authenticated user data
+        setformdata((prev) => ({
+          ...prev,
+          username: currentUser.displayName || "",
+        }));
+      } else {
+        // Redirect to login if not authenticated
+        router.push("/login");
+      }
+    });
+
+    // Cleanup listener on unmount
+    return () => unsubscribe();
+  }, [auth, router]);
 
   const [formdata, setformdata] = useState<FormDataTypes>({
     projectName: "",
     projectDescription: "",
     projectLiveLink: "",
     githubRepoLink: "",
+    username: "",
     fundGoal: 0,
   });
 

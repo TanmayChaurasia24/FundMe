@@ -18,8 +18,6 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState("");
   const router = useRouter();
   const auth = getAuth(app);
-  const cloudPresetName = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME!;
-
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -52,17 +50,18 @@ export default function ProfilePage() {
     }
   };
 
-  const handleAvatarUpload = async (result: any) => {
+  const handleAvatarUpload = async (PhotoURL: string) => {
     try {
-      // const { secure_url } = result.info;
-      // await updateProfile(auth.currentUser!, { photoURL: secure_url });
-      // setAvatarUrl(secure_url);
-      // setSuccess("Image Uploaded successfully");
-      // router.push(`/${user.displayName || "defaultUsername"}`); 
-      // router.refresh();
-      console.log(result);
+      await updateProfile(auth.currentUser!, { photoURL: PhotoURL });
+      setAvatarUrl(PhotoURL);
+      setSuccess("Image Uploaded successfully");
+      router.push(`/${user.displayName || "defaultUsername"}`); 
+      router.refresh();
+      console.log(PhotoURL);
       
     } catch (error) {
+      console.log(PhotoURL);
+      
       console.error("Error updating avatar:", error);
       alert("Failed to update avatar.");
     }

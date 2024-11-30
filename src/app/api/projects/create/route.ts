@@ -7,7 +7,7 @@ dbconnect()
 export const POST = async (req: NextRequest) => {
   try {
     const response = await req.json();
-    const {projectName, projectDescription, projectLiveLink, githubRepoLink,  fundGoal} = response;
+    const {projectName, projectDescription, projectLiveLink, githubRepoLink,  fundGoal, username} = response;
 
     if(!projectName || !projectDescription || !githubRepoLink || !fundGoal) {
       return NextResponse.json({
@@ -37,7 +37,8 @@ export const POST = async (req: NextRequest) => {
       projectDescription,
       projectLiveLink,
       githubRepoLink,
-      fundGoal
+      fundGoal,
+      username
     }).save()
 
     return NextResponse.json({

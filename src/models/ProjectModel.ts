@@ -6,6 +6,7 @@ interface projectSchematypes {
     projectLiveLink: string;
     githubRepoLink: string;
     fundGoal: number; 
+    username: string;
 }
 
 const projectSchema = new mongoose.Schema<projectSchematypes>({
@@ -30,6 +31,10 @@ const projectSchema = new mongoose.Schema<projectSchematypes>({
         required: true,
         max: 20000,
     },
+    username: {
+        type: String,
+        required: true
+    }
 }, { timestamps: true });
 
 const Project = mongoose.models.Project || mongoose.model('Project', projectSchema);

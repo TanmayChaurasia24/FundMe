@@ -16,6 +16,7 @@ import { Badge } from "../../../components/ui/badge";
 import { Github, Globe, DollarSign } from "lucide-react";
 
 interface AllProjectType {
+  username: string;
   id: string;
   projectName: string;
   projectDescription: string;
@@ -40,8 +41,9 @@ export default function Page() {
           console.log("No project found");
           return;
         }
-
-        setProjects(response.data);
+        console.log(response.data);
+        
+        setProjects(response.data); 
       } catch (error: any) {
         console.log("Error in fetching all the projects", error);
       }
@@ -62,7 +64,10 @@ export default function Page() {
             {allProjects.map((project) => (
               <Card key={project.id} className="bg-slate-950 text-neutral-200">
                 <CardHeader>
+                  <div>
+                  <div><span className="font-bold text-green-500 text-xl">Owner: </span>{project.username}</div>
                   <CardTitle>{project.projectName}</CardTitle>
+                  </div>
                   <CardDescription>
                     {project.projectDescription}
                   </CardDescription>

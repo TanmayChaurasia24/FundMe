@@ -13,7 +13,9 @@ import { app } from "../firebase"; // Ensure Firebase is initialized here
 
 export default function UsernamePage({ username }: any) {
   const [user, setUser] = useState<any>(null); // State to track logged-in user
+  const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg")
   const auth = getAuth(app); // Firebase Auth instance
+
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -23,6 +25,7 @@ export default function UsernamePage({ username }: any) {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser); // Store authenticated user data
+        setAvatarUrl(currentUser.photoURL || "/placeholder.svg");
       } else {
         // Redirect to login if not authenticated
         router.push("/login");
@@ -81,7 +84,7 @@ export default function UsernamePage({ username }: any) {
           />
           <div className="absolute left-1/2 -bottom-14 transform -translate-x-1/2">
             <Avatar className="h-28 w-28 border-4 border-white">
-              <AvatarImage src="/download.jpg" alt={`@${username}'s avatar`} />
+              <AvatarImage src={avatarUrl} alt={`@${username}'s avatar`} />
               <AvatarFallback>{username?.[0]?.toUpperCase() || "U"}</AvatarFallback>
             </Avatar>
           </div>
@@ -97,7 +100,7 @@ export default function UsernamePage({ username }: any) {
 
         <div className="payments flex gap-5 w-[70%] mx-auto mb-2">
           <ThreeDCardDemo />
-          <div className="flex flex-col h-[40vh] justify-center items-center mt-[150px]">
+          <div className="flex flex-col h-[40vh] justify-center items-center mt-[150px] mb-28">
             <PlaceholdersAndVanishInputDemo />
           </div>
         </div>

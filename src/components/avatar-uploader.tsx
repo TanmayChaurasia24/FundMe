@@ -3,20 +3,24 @@
 
 import { CldUploadWidget } from "next-cloudinary";
 
-interface AvatarUploaderProps {
-  onUploadSuccess: (url: string) => void;
-}
 
-export function AvatarUploader({ onUploadSuccess }: AvatarUploaderProps) {
+
+export function AvatarUploader({ onUploadSuccess }: any) {
   return (
     <CldUploadWidget
       uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
       signatureEndpoint="/api/sign-cloudinary-params"
       onSuccess={(result) => {
-        if (typeof result.info === "object" && "secure_url" in result.info) {
+        if (result?.info && typeof result.info === "object" && "secure_url" in result.info) {
+          console.log(result);
+          
           onUploadSuccess(result.info.secure_url);
+        } else {
+          console.error("Unexpected result structure:", result);
+          alert("Failed to retrieve the uploaded image URL.");
         }
       }}
+      
       options={{
         singleUploadAutoClose: true,
       }}
