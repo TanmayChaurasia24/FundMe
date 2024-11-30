@@ -2,39 +2,69 @@
 
 import Image from "next/image";
 import { ThreeDCardDemo } from "../components/FansBgCard";
-import { PlaceholdersAndVanishInputDemo } from "../components/Makepayment";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../firebase"; // Ensure Firebase is initialized here
+import { app } from "../firebase"; // Ensure Firebase is initialized
+import axios from "axios";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Globe, Github, Badge, DollarSign } from "lucide-react";
+import { Button } from "./ui/button";
 
-export default function UsernamePage({ username }: any) {
-  const [user, setUser] = useState<any>(null); // State to track logged-in user
-  const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg")
-  const auth = getAuth(app); // Firebase Auth instance
+interface AllProjectType {
+  username: string;
+  id: string;
+  projectName: string;
+  projectDescription: string;
+  projectLiveLink: string;
+  githubRepoLink: string;
+  fundGoal: number;
+}
+
+export default function UsernamePage({ username }: { username: string }) {
+  const [user, setUser] = useState<any>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
+  const [myprojects, setMyProjects] = useState<AllProjectType[]>([]);
+  const auth = getAuth(app);
 
   const searchParams = useSearchParams();
   const router = useRouter();
 
-
   useEffect(() => {
-    // Set up Firebase auth listener
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        setUser(currentUser); // Store authenticated user data
+        setUser(currentUser);
         setAvatarUrl(currentUser.photoURL || "/placeholder.svg");
       } else {
-        // Redirect to login if not authenticated
         router.push("/login");
       }
     });
 
-    // Cleanup listener on unmount
-    return () => unsubscribe();
+    return () => unsubscribe(); // Cleanup Firebase listener on unmount
   }, [auth, router]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get<AllProjectType[]>(`/api/projects/${username.replace('_'," ")}`);
+        setMyProjects(response.data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, [username]);
 
   useEffect(() => {
     if (searchParams.get("paymentdone") === "true") {
@@ -50,12 +80,7 @@ export default function UsernamePage({ username }: any) {
         transition: Bounce,
       });
     }
-
-    // Redirect to user's personalized page if displayName is available
-    if (user?.displayName) {
-      router.push(`/${user.displayName}`);
-    }
-  }, [user, searchParams, router]);
+  }, [searchParams]);
 
   return (
     <>
@@ -63,12 +88,8 @@ export default function UsernamePage({ username }: any) {
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
         pauseOnHover
+        draggable
         theme="light"
         transition={Bounce}
       />
@@ -85,7 +106,9 @@ export default function UsernamePage({ username }: any) {
           <div className="absolute left-1/2 -bottom-14 transform -translate-x-1/2">
             <Avatar className="h-28 w-28 border-4 border-white">
               <AvatarImage src={avatarUrl} alt={`@${username}'s avatar`} />
-              <AvatarFallback>{username?.[0]?.toUpperCase() || "U"}</AvatarFallback>
+              <AvatarFallback>
+                {username?.[0]?.toUpperCase() || "U"}
+              </AvatarFallback>
             </Avatar>
           </div>
         </div>
@@ -98,11 +121,68 @@ export default function UsernamePage({ username }: any) {
           </p>
         </div>
 
-        <div className="payments flex gap-5 w-[70%] mx-auto mb-2">
+        <div className="payments flex justify-center items-center gap-5 w-[70%] mx-auto mb-2">
           <ThreeDCardDemo />
-          <div className="flex flex-col h-[40vh] justify-center items-center mt-[150px] mb-28">
-            <PlaceholdersAndVanishInputDemo />
-          </div>
+        </div>
+
+        <div>
+          <h1 className="text-center text-4xl">Your Projects</h1>
+          {myprojects.length > 0 ? (
+            myprojects.map((project) => (
+              <Card key={project.id} className="bg-slate-950 text-neutral-200">
+                <CardHeader>
+                  <CardTitle>{project.projectName}</CardTitle>
+                  <CardDescription>
+                    {project.projectDescription}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col gap-3">
+                    {project.projectLiveLink && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="bg-blue-700 border-none rounded-lg"
+                      >
+                        <a
+                          href={project.projectLiveLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center"
+                        >
+                          <Globe className="mr-2 h-4 w-4" /> Live Project
+                        </a>
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="bg-blue-700 border-none rounded-lg"
+                    >
+                      <a
+                        href={project.githubRepoLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center"
+                      >
+                        <Github className="mr-2 h-4 w-4" /> GitHub Repository
+                      </a>
+                    </Button>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between items-center">
+                  <Badge className="flex items-center">
+                    <DollarSign className="mr-1 h-4 w-4" />
+                    Fund Goal: ${project.fundGoal.toLocaleString()}
+                  </Badge>
+                </CardFooter>
+              </Card>
+            ))
+          ) : (
+            <p className="text-center">No projects found.</p>
+          )}
         </div>
       </div>
     </>

@@ -52,6 +52,15 @@ export default function Page() {
     showAllProjects();
   }, []);
 
+  const handledonate = async (username: string) => {
+    try {
+      router.push(`publicprofile/${username.replace(/\s+/g, "_")}`)    
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-900 text-foreground">
       <main className="flex-grow container mx-auto px-4 py-8">
@@ -108,17 +117,6 @@ export default function Page() {
                         </a>
                       </Button>
                     </div>
-                    {/* <div>
-                      <Progress
-                        value={40}
-                        max={project.fundGoal}
-                        className="rounded-lg w-full bg-purple-500"
-                        style={{
-                          backgroundColor: "white",
-                          color: "white",
-                        }}
-                      />
-                    </div> */}
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
@@ -126,7 +124,7 @@ export default function Page() {
                     <DollarSign className="mr-1 h-4 w-4" />
                     Fund Goal: ${project.fundGoal.toLocaleString()}
                   </Badge>
-                  <Button onClick={() => {router.push(`givefund/${project.projectName}`)}}>Fund This Project</Button>
+                  <Button onClick={() => handledonate(project.username)}>Fund This Project</Button>
                 </CardFooter>
               </Card>
             ))}
